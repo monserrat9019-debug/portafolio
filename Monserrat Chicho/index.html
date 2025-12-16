@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portafolio Personal | Monserrat Chicho</title>
+    <!-- Carga de Tailwind CSS para el estilo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Configuramos la fuente principal del proyecto (Inter para el cuerpo, Playfair para títulos) */
+        :root {
+            --color-primary: #FF708C; /* Coral vibrante */
+            --color-secondary: #C690F4; /* Morado/Malva */
+            --color-background: #FDF4F6; /* Rosa Pálido/Casi Blanco */
+            --color-text: #2D3748; /* Gris oscuro para el texto */
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+        }
+
+        .header-bg {
+            background-color: var(--color-primary);
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 30px -5px rgba(255, 112, 140, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-shadow:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px -5px rgba(255, 112, 140, 0.35);
+        }
+
+        .profile-title {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Sección del Encabezado (Hero/Presentación) -->
+    <header class="header-bg py-16 md:py-24 rounded-b-3xl shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-10">
+            
+            <!-- Contenido de Presentación -->
+            <div class="text-center lg:text-left text-white max-w-xl">
+                <!-- COMIENZO DE LA SECCIÓN EDITABLE: Título y Descripción -->
+                <h1 class="profile-title text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">
+                    Hola, soy Monserrat Chicho
+                </h1>
+                <p class="text-lg sm:text-xl font-light mb-6 opacity-90">
+                    Hola! Soy <strong>Monserrat Chicho</strong>, una joven creativa, organizada y con pasión por la tecnología.
+                      Me encanta desarrollar proyectos con un toque estético y funcional, combinando programación y diseño.
+                </p>
+                <div class="mt-8">
+                    <a href="#contacto" class="inline-block bg-white text-coral-500 font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105" style="color: var(--color-primary);">
+                        Conéctate Conmigo
+                    </a>
+                </div>
+                <!-- FIN DE LA SECCIÓN EDITABLE: Título y Descripción -->
+            </div>
+
+            <!-- Espacio para la Foto de Perfil -->
+            <div class="shrink-0">
+                <!-- COMIENZO DE LA SECCIÓN EDITABLE: Foto de Perfil -->
+                <img 
+                    src="https://placehold.co/300x300/C690F4/ffffff?text=Tu+Foto" 
+                    alt="Foto de Perfil de [Tu Nombre]" 
+                    class="w-48 h-48 sm:w-64 sm:h-64 object-cover rounded-full border-8 border-white shadow-2xl"
+                    onerror="this.onerror=null; this.src='https://placehold.co/300x300/C690F4/ffffff?text=Tu+Foto';"
+                >
+                <!-- REEMPLAZA "https://placehold.co..." con la URL de tu foto de perfil. -->
+                <!-- FIN DE LA SECCIÓN EDITABLE: Foto de Perfil -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Sección Principal con Cards de Enlaces -->
+    <main class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12 profile-title" style="color: var(--color-text);">
+                Mis Proyectos y Plataformas
+            </h2>
+
+            <!-- Grid de Cards Responsivo -->
+            <!-- Nota: Ahora hay 6 cards en total -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- COMIENZO DE LA SECCIÓN EDITABLE: Card 1 (Portafolio) -->
+                <div class="bg-white p-6 rounded-2xl card-shadow border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <!-- Icono para Portafolio -->
+                        <svg class="w-8 h-8 mr-3" style="color: var(--color-primary);" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8.293 11.707a1 1 0 011.414 0L12 13.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                        <h3 class="text-xl font-semibold" style="color: var(--color-primary);">Gestión Financiera Integral</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Plataforma financiera que te permite gestionar y 
+                        controlar tus finanzas de forma simple y segura, con herramientas inteligentes para el seguimiento de ingresos, 
+                        gastos y toma de decisiones financieras informadas.
+                    </p>
+                    <a href="https://ejemplo.com/portafolio" target="_blank" class="text-sm font-medium hover:underline transition duration-200" style="color: var(--color-secondary);">
+                        Ingresar &rarr;
+                    </a>
+                    <!-- EDITA: URL del Enlace -->
+                </div>
+                <!-- FIN DE LA SECCIÓN EDITABLE: Card 1 -->
+
+                <!-- COMIENZO DE LA SECCIÓN EDITABLE: Card 2 (Blog) -->
+                <div class="bg-white p-6 rounded-2xl card-shadow border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <!-- Icono para Blog -->
+                        <svg class="w-8 h-8 mr-3" style="color: var(--color-secondary);" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828zM8.28 11.28l1.414 1.414 5.6-5.6-1.414-1.414-5.6 5.6zM4 4h4v2H4V4zm0 4h12v2H4V8zm0 4h4v2H4v-2z"></path></svg>
+                        <h3 class="text-xl font-semibold" style="color: var(--color-secondary);">Panda Scape</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Un panda travieso decidió que hoy no es día de siestas. Corre, salta y escapa a toda velocidad mientras esquiva obstáculos absurdos y 
+                        causa caos adorable en su huida. ¡Diversión asegurada y muchas risas panda!
+                    </p>
+                    <a href="Panda/indexpanda.html" target="_blank" class="text-sm font-medium hover:underline transition duration-200" style="color: var(--color-primary);">
+                        Jugar ya&rarr;
+                    </a>
+                    <!-- EDITA: URL del Enlace -->
+                </div>
+                <!-- FIN DE LA SECCIÓN EDITABLE: Card 2 -->
+
+                <!-- COMIENZO DE LA SECCIÓN EDITABLE: Card 3 (LinkedIn) -->
+                <div class="bg-white p-6 rounded-2xl card-shadow border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <!-- Icono para LinkedIn -->
+                        <svg class="w-8 h-8 mr-3" style="color: var(--color-primary);" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg>
+                        <h3 class="text-xl font-semibold" style="color: var(--color-primary);">BookStore - Tu tienda de libros online</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Tienda online de libros donde cada historia te espera. Descubre novelas, cuentos y conocimientos para todos los gustos, con compras fáciles, envíos rápidos y lectura sin límites.
+                    <a href=" " target="_blank" class="text-sm font-medium hover:underline transition duration-200" style="color: var(--color-secondary);">
+                        Comprar &rarr;
+                    </a>
+                    <!-- EDITA: URL del Enlace -->
+                </div>
+                <!-- FIN DE LA SECCIÓN EDITABLE: Card 3 -->
+
+                <!-- COMIENZO DE LA SECCIÓN AGREGADA: Card 4 (Instagram/Red Social) -->
+                <div class="bg-white p-6 rounded-2xl card-shadow border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <!-- Icono para Instagram (ejemplo de Red Social) -->
+                        <svg class="w-8 h-8 mr-3" style="color: var(--color-secondary);" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 3a7 7 0 00-7 7c0 3.866 3.134 7 7 7a7 7 0 007-7 7 7 0 00-7-7zM5 10a5 5 0 1110 0 5 5 0 01-10 0zM14 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path></svg>
+                        <h3 class="text-xl font-semibold" style="color: var(--color-secondary);">Instagram de Diseño</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Sigue mi feed para inspiración diaria, vistas rápidas de proyectos y detrás de escenas creativas.
+                    </p>
+                    <a href="https://instagram.com/tu_usuario" target="_blank" class="text-sm font-medium hover:underline transition duration-200" style="color: var(--color-primary);">
+                        Visitar Instagram &rarr;
+                    </a>
+                    <!-- EDITA: URL del Enlace -->
+                </div>
+                <!-- FIN DE LA SECCIÓN AGREGADA: Card 4 -->
+
+                <!-- COMIENZO DE LA SECCIÓN AGREGADA: Card 5 (Tienda o Freelance) -->
+                <div class="bg-white p-6 rounded-2xl card-shadow border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <!-- Icono para Tienda/Servicios -->
+                        <svg class="w-8 h-8 mr-3" style="color: var(--color-primary);" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.431A.999.999 0 007.5 12h7.495a1 1 0 00.995-.883l.255-1.275V7a1 1 0 10-2 0v2.117L13.844 7.6a1 1 0 00-.91-.122L6.182 9.421a1.002 1.002 0 00-.986 1.157l.006.015A.999.999 0 005 11h9a1 1 0 000-2H5.093l.31-1.242 1.488-5.952a.997.997 0 00-.91-.706H3zM10 16a2 2 0 110-4 2 2 0 010 4zm7 0a2 2 0 110-4 2 2 0 010 4z"></path></svg>
+                        <h3 class="text-xl font-semibold" style="color: var(--color-primary);">Servicios de Consultoría</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Reserva una sesión para discutir tus necesidades de marca, estrategia de contenido o revisión de UX.
+                    </p>
+                    <a href="https://ejemplo.com/servicios" target="_blank" class="text-sm font-medium hover:underline transition duration-200" style="color: var(--color-secondary);">
+                        Ver Precios y Reservar &rarr;
+                    </a>
+                    <!-- EDITA: URL del Enlace -->
+                </div>
+                <!-- FIN DE LA SECCIÓN AGREGADA: Card 5 -->
+
+                <!-- COMIENZO DE LA SECCIÓN AGREGADA: Card 6 (GitHub/Código o Recursos) -->
+                <div class="bg-white p-6 rounded-2xl card-shadow border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <!-- Icono para Código/Recursos -->
+                        <svg class="w-8 h-8 mr-3" style="color: var(--color-secondary);" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.258l-1 4a1 1 0 11-1.898-.5l1-4a1 1 0 011.265-.758zM10 9a1 1 0 00-1 1v2a1 1 0 102 0v-2a1 1 0 00-1-1z" clip-rule="evenodd"></path><path d="M9 14.505V16a1 1 0 102 0v-1.495l1.414 1.414a1 1 0 001.414-1.414l-1.414-1.414h2.121a1 1 0 000-2H7.76l-1.707 1.707a1 1 0 001.414 1.414L9 14.505z"></path></svg>
+                        <h3 class="text-xl font-semibold" style="color: var(--color-secondary);">Recursos Gratuitos</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">
+                        Descarga mis kits de plantillas gratuitas, paletas de colores y otros recursos útiles para creativos.
+                    </p>
+                    <a href="https://ejemplo.com/recursos" target="_blank" class="text-sm font-medium hover:underline transition duration-200" style="color: var(--color-primary);">
+                        Descargar Ahora &rarr;
+                    </a>
+                    <!-- EDITA: URL del Enlace -->
+                </div>
+                <!-- FIN DE LA SECCIÓN AGREGADA: Card 6 -->
+
+            </div>
+        </div>
+    </main>
+    
+    <!-- Sección de Contacto (Footer) -->
+    <footer id="contacto" class="py-10 mt-16 text-center text-white rounded-t-3xl shadow-inner" style="background-color: var(--color-secondary);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- COMIENZO DE LA SECCIÓN EDITABLE: Email y Derechos -->
+            <p class="mb-6 text-lg font-bold">
+                <a href="mailto:tu.email@ejemplo.com" class="underline hover:text-gray-200 transition duration-200">
+                    monserrat9019@gmail.com
+                </a>
+            </p>
+            <p class="text-sm opacity-80 mt-6">
+                &copy; 2025 Monserrat Chicho. Todos los derechos reservados.
+            </p>
+            <!-- FIN DE LA SECCIÓN EDITABLE: Email y Derechos -->
+        </div>
+    </footer>
+
+</body>
+</html>

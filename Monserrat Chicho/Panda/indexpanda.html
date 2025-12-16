@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panda Escape: Bambú Rush</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        canvas {
+            background-color: #8fbc8f; /* Verde pasto */
+            display: block;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            pointer-events: none;
+            text-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 { margin-bottom: 10px; font-size: 40px; color: #badc58; }
+        p { font-size: 18px; max-width: 80%; line-height: 1.5; color: #ccc; }
+        
+        button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 24px;
+            background-color: #badc58;
+            color: #2f3640;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background-color: #dff9fb;
+        }
+
+        .controls-hint {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        /* Indicadores de estado sobre el canvas */
+        .alert-icon {
+            position: absolute;
+            display: none;
+            font-size: 30px;
+            animation: bounce 0.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+    <div id="ui-layer">
+        <div class="stat-box">🎋 Bambú: <span id="scoreDisplay">0</span> / <span id="targetDisplay">15</span></div>
+        <div class="stat-box">❤️ Vidas: <span id="livesDisplay">1</span></div>
+    </div>
+
+    <div id="overlay">
+        <h1 id="titleText">🐼 Panda Escape</h1>
+        <p id="descText">
+            Eres un panda hambriento. <br>
+            Come 15 trozos de bambú para ganar.<br>
+            ¡Evita al cuidador del zoológico! Si te ve, corre.
+        </p>
+        <button id="startBtn" onclick="startGame()">JUGAR</button>
+        <div class="controls-hint">Usa las flechas ⬆️⬇️⬅️➡️ o WASD para moverte</div>
+    </div>
+</div>
+
+<script>
+    // Configuración del Canvas
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const overlay = document.getElementById('overlay');
+    const titleText = document.getElementById('titleText');
+    const descText = document.getElementById('descText');
+    const startBtn = document.getElementById('startBtn');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const targetDisplay = document.getElementById('targetDisplay');
+
+    // Configuración del Juego
+    const GAME_CONFIG = {
+        targetScore: 15,
+        playerSpeed: 4,
+        enemySpeedPatrol: 2,
+        enemySpeedChase: 3.2,
+        enemyVisionRadius: 180,
+        enemyLooseRadius: 250, // Distancia para dejar de perseguir
+        bambooCount: 3,
+        treeCount: 8
+    };
+
+    // Estado del Juego
+    let gameState = 'START'; // START, PLAYING, GAMEOVER, WIN
+    let score = 0;
+    let animationId;
+    
+    // Entidades
+    let player = { x: 0, y: 0, size: 30, emoji: '🐼' };
+    let enemy = { x: 0, y: 0, size: 35, emoji: '👮‍♂️', state: 'PATROL', targetX: 0, targetY: 0, alert: false };
+    let bamboos = [];
+    let trees = [];
+
+    // Controles
+    const keys = {
+        ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
+        w: false, s: false, a: false, d: false,
+        W: false, S: false, A: false, D: false
+    };
+
+    window.addEventListener('keydown', (e) => {
+        if(keys.hasOwnProperty(e.key)) keys[e.key] = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if(keys.hasOwnProperty(e.key)) keys[e.key] = false;
+    });
+
+    // Funciones Auxiliares
+    function randomRange(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function getDistance(obj1, obj2) {
+        return Math.sqrt(Math.pow(obj1.x - obj2.x, 2) + Math.pow(obj1.y - obj2.y, 2));
+    }
+
+    function rectIntersect(r1, r2) {
+        // Colisiones simples tipo caja (AABB) con un margen para hacerlo indulgente
+        const padding = 5; 
+        return !(r2.x > r1.x + r1.size - padding || 
+                 r2.x + r2.size - padding < r1.x || 
+                 r2.y > r1.y + r1.size - padding || 
+                 r2.y + r2.size - padding < r1.y);
+    }
+
+    function checkWallCollision(newX, newY, size) {
+        // Bordes del mapa
+        if (newX < 0 || newX + size > canvas.width) return true;
+        if (newY < 0 || newY + size > canvas.height) return true;
+        
+        // Árboles
+        let playerRect = {x: newX, y: newY, size: size};
+        for (let tree of trees) {
+            if (rectIntersect(playerRect, tree)) return true;
+        }
+        return false;
+    }
+
+    // Inicialización
+    function initGame() {
+        score = 0;
+        scoreDisplay.innerText = score;
+        targetDisplay.innerText = GAME_CONFIG.targetScore;
+        
+        // Posicionar Jugador (Esquina superior izquierda)
+        player.x = 50;
+        player.y = 50;
+
+        // Generar Árboles (Obstáculos)
+        trees = [];
+        for(let i=0; i<GAME_CONFIG.treeCount; i++) {
+            let valid = false;
+            let t = {};
+            while(!valid) {
+                t = {
+                    x: randomRange(50, canvas.width - 50),
+                    y: randomRange(50, canvas.height - 50),
+                    size: 50,
+                    emoji: '🌲'
+                };
+                // No spawnear encima del jugador inicial
+                if(getDistance(player, t) > 150) valid = true;
+            }
+            trees.push(t);
+        }
+
+        // Posicionar Enemigo (Lejos del jugador)
+        enemy.x = canvas.width - 60;
+        enemy.y = canvas.height - 60;
+        enemy.state = 'PATROL';
+        setNewPatrolPoint();
+
+        // Generar Bambú inicial
+        bamboos = [];
+        spawnBamboo(GAME_CONFIG.bambooCount);
+    }
+
+    function spawnBamboo(count) {
+        for (let i = 0; i < count; i++) {
+            let valid = false;
+            let b = {};
+            while (!valid) {
+                b = {
+                    x: randomRange(20, canvas.width - 40),
+                    y: randomRange(20, canvas.height - 40),
+                    size: 30,
+                    emoji: '🎋'
+                };
+                // Evitar spawnear dentro de árboles o muy cerca del jugador
+                let collidingTree = trees.some(tree => rectIntersect(tree, b));
+                if (!collidingTree && getDistance(player, b) > 50) valid = true;
+            }
+            bamboos.push(b);
+        }
+    }
+
+    function setNewPatrolPoint() {
+        // Elige un punto aleatorio en el mapa para ir hacia él
+        enemy.targetX = randomRange(20, canvas.width - 40);
+        enemy.targetY = randomRange(20, canvas.height - 40);
+    }
+
+    // Lógica del Enemigo
+    function updateEnemy() {
+        let distToPlayer = getDistance(enemy, player);
+        let speed = GAME_CONFIG.enemySpeedPatrol;
+
+        // Máquina de estados simple
+        if (enemy.state === 'PATROL') {
+            enemy.alert = false;
+            if (distToPlayer < GAME_CONFIG.enemyVisionRadius) {
+                // VI AL JUGADOR -> CAMBIAR A PERSECUCIÓN
+                // Comprobar si hay un árbol en medio (Línea de visión simple)
+                // Para este ejemplo casual, asumiremos que el panda es ruidoso y lo detecta igual
+                enemy.state = 'CHASE';
+            }
+            
+            // Mover hacia punto de patrulla
+            if (Math.abs(enemy.x - enemy.targetX) < 5 && Math.abs(enemy.y - enemy.targetY) < 5) {
+                setNewPatrolPoint();
+            }
+        } else if (enemy.state === 'CHASE') {
+            enemy.alert = true;
+            speed = GAME_CONFIG.enemySpeedChase;
+            enemy.targetX = player.x; // El objetivo ahora es el jugador
+            enemy.targetY = player.y;
+
+            if (distToPlayer > GAME_CONFIG.enemyLooseRadius) {
+                // JUGADOR ESCAPÓ
+                enemy.state = 'PATROL';
+                setNewPatrolPoint();
+            }
+        }
+
+        // Movimiento hacia targetX/Y
+        let dx = enemy.targetX - enemy.x;
+        let dy = enemy.targetY - enemy.y;
+        let distance = Math.sqrt(dx*dx + dy*dy);
+
+        if (distance > 0) {
+            let moveX = (dx / distance) * speed;
+            let moveY = (dy / distance) * speed;
+
+            // Colisión simple con árboles para la IA (si choca, se desliza o se detiene)
+            // Para simplificar, la IA atraviesa árboles muy lentamente o intenta rodearlos
+            // Aquí haremos que la IA simplemente se mueva.
+            enemy.x += moveX;
+            enemy.y += moveY;
+        }
+
+        // Colisión con Jugador (GAME OVER)
+        // Reducimos un poco el hitbox para que sea justo
+        if (distToPlayer < (player.size/2 + enemy.size/2 - 10)) {
+            gameOver(false);
+        }
+    }
+
+    // Actualización Principal
+    function update() {
+        if (gameState !== 'PLAYING') return;
+
+        // 1. Movimiento del Jugador
+        let dx = 0;
+        let dy = 0;
+        if (keys.ArrowUp || keys.w || keys.W) dy = -GAME_CONFIG.playerSpeed;
+        if (keys.ArrowDown || keys.s || keys.S) dy = GAME_CONFIG.playerSpeed;
+        if (keys.ArrowLeft || keys.a || keys.A) dx = -GAME_CONFIG.playerSpeed;
+        if (keys.ArrowRight || keys.d || keys.D) dx = GAME_CONFIG.playerSpeed;
+
+        // Normalizar diagonal para que no corra más rápido
+        if (dx !== 0 && dy !== 0) {
+            dx *= 0.7071;
+            dy *= 0.7071;
+        }
+
+        if (!checkWallCollision(player.x + dx, player.y, player.size)) player.x += dx;
+        if (!checkWallCollision(player.x, player.y + dy, player.size)) player.y += dy;
+
+        // 2. Actualizar Enemigo
+        updateEnemy();
+
+        // 3. Colisión con Bambú
+        for (let i = bamboos.length - 1; i >= 0; i--) {
+            if (rectIntersect(player, bamboos[i])) {
+                bamboos.splice(i, 1);
+                score++;
+                scoreDisplay.innerText = score;
+                // Sonido de comer (opcional, visual feedback)
+                spawnBamboo(1); // Respawn inmediato
+
+                if (score >= GAME_CONFIG.targetScore) {
+                    gameOver(true);
+                }
+            }
+        }
+    }
+
+    // Dibujado
+    function draw() {
+        // Limpiar pantalla
+        ctx.fillStyle = '#8fbc8f'; // Color pasto
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Dibujar Árboles
+        ctx.font = '50px Arial';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        for (let tree of trees) {
+            ctx.fillText(tree.emoji, tree.x, tree.y);
+            // Debug Hitbox: 
+            // ctx.strokeStyle = 'red'; ctx.strokeRect(tree.x, tree.y, tree.size, tree.size);
+        }
+
+        // Dibujar Bambú
+        ctx.font = '30px Arial';
+        for (let b of bamboos) {
+            ctx.fillText(b.emoji, b.x, b.y);
+        }
+
+        // Dibujar Jugador
+        ctx.font = '30px Arial';
+        ctx.fillText(player.emoji, player.x, player.y);
+
+        // Dibujar Enemigo
+        // Rango de visión (feedback visual)
+        ctx.beginPath();
+        ctx.arc(enemy.x + enemy.size/2, enemy.y + enemy.size/2, GAME_CONFIG.enemyVisionRadius, 0, Math.PI * 2);
+        ctx.fillStyle = enemy.state === 'CHASE' ? 'rgba(231, 76, 60, 0.2)' : 'rgba(241, 196, 15, 0.1)';
+        ctx.fill();
+        ctx.strokeStyle = enemy.state === 'CHASE' ? 'rgba(231, 76, 60, 0.5)' : 'rgba(241, 196, 15, 0.3)';
+        ctx.stroke();
+
+        ctx.font = '35px Arial';
+        // Voltear sprite si se mueve a la izquierda (simple efecto)
+        ctx.save();
+        if (enemy.targetX < enemy.x) {
+             ctx.scale(-1, 1);
+             ctx.fillText(enemy.emoji, -enemy.x - enemy.size, enemy.y);
+        } else {
+            ctx.fillText(enemy.emoji, enemy.x, enemy.y);
+        }
+        ctx.restore();
+
+        // Alerta de detección
+        if (enemy.alert) {
+            ctx.font = '20px Arial';
+            ctx.fillText('❗', enemy.x + 10, enemy.y - 10);
+        }
+    }
+
+    function gameLoop() {
+        update();
+        draw();
+        if (gameState === 'PLAYING') {
+            animationId = requestAnimationFrame(gameLoop);
+        }
+    }
+
+    function startGame() {
+        initGame();
+        gameState = 'PLAYING';
+        overlay.style.display = 'none';
+        gameLoop();
+    }
+
+    function gameOver(win) {
+        gameState = win ? 'WIN' : 'GAMEOVER';
+        cancelAnimationFrame(animationId);
+        
+        overlay.style.display = 'flex';
+        if (win) {
+            titleText.innerText = '¡VICTORIA! 🎉';
+            titleText.style.color = '#badc58';
+            descText.innerHTML = `¡El panda está lleno y feliz!<br>Puntuación: ${score}`;
+        } else {
+            titleText.innerText = '¡ATRAPADO! 👮‍♂️';
+            titleText.style.color = '#ff7979';
+            descText.innerHTML = `El cuidador te atrapó.<br>Conseguiste ${score} bambúes.`;
+        }
+        startBtn.innerText = 'JUGAR OTRA VEZ';
+    }
+
+    // Ajustar tamaño inicial del canvas si es necesario (responsive básico)
+    // Para este demo mantenemos 800x600 fijo pero escalado por CSS
+</script>
+
+</body>
+</html>
