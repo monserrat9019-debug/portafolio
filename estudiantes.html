@@ -1,0 +1,226 @@
+import React, { useState } from 'react';
+import { BookOpen, Code, Terminal, Layers, Cpu, Database, Cloud, Shield, Award, Users, ChevronRight, CheckCircle } from 'lucide-react';
+
+const stages = {
+  basic: {
+    id: 'basic',
+    title: 'Fase 1: Fundamentos (Semestres 1-3)',
+    description: 'Construyendo la lógica y la base matemática.',
+    color: 'bg-blue-600',
+    icon: <Code className="w-6 h-6" />,
+    subjects: [
+      'Introducción a la Programación (Lógica)',
+      'Cálculo Diferencial e Integral',
+      'Álgebra Lineal',
+      'Física Básica',
+      'Estructuras Discretas'
+    ],
+    techStack: [
+      { name: 'Python/C++', desc: 'Lenguajes tipados y de script para entender memoria y lógica.' },
+      { name: 'Git & GitHub', desc: 'Aprende control de versiones desde el día 1.' },
+      { name: 'Linux Basics', desc: 'Manejo básico de terminal y sistemas de archivos.' }
+    ],
+    advice: [
+      'No copies código, entiéndelo. La lógica es más importante que la sintaxis.',
+      'Las matemáticas desarrollan tu pensamiento abstracto, no las subestimes.',
+      'Aprende inglés técnico, la mejor documentación está en inglés.'
+    ]
+  },
+  intermediate: {
+    id: 'intermediate',
+    title: 'Fase 2: Núcleo Profesional (Semestres 4-7)',
+    description: 'Desarrollo de software robusto y comprensión de sistemas.',
+    color: 'bg-indigo-600',
+    icon: <Layers className="w-6 h-6" />,
+    subjects: [
+      'Estructuras de Datos y Algoritmos',
+      'Bases de Datos (SQL/NoSQL)',
+      'Sistemas Operativos',
+      'Redes de Computadoras',
+      'Ingeniería de Software'
+    ],
+    techStack: [
+      { name: 'Java/C#', desc: 'Programación Orientada a Objetos (POO) estricta.' },
+      { name: 'SQL & MongoDB', desc: 'Modelado y persistencia de datos.' },
+      { name: 'Docker', desc: 'Introducción a contenedores y despliegue.' },
+      { name: 'React/Angular', desc: 'Desarrollo Frontend moderno.' }
+    ],
+    advice: [
+      'Empieza a construir un portafolio en GitHub con proyectos reales.',
+      'Participa en Hackathones para trabajar bajo presión y en equipo.',
+      'Elige tus electivas pensando en qué rama te gusta más (Backend, Data, Seguridad).'
+    ]
+  },
+  advanced: {
+    id: 'advanced',
+    title: 'Fase 3: Especialización y Salida (Semestres 8-10)',
+    description: 'Maestría técnica, tesis y preparación laboral.',
+    color: 'bg-purple-600',
+    icon: <Cpu className="w-6 h-6" />,
+    subjects: [
+      'Inteligencia Artificial / Machine Learning',
+      'Arquitectura de Software',
+      'Seguridad Informática',
+      'Gerencia de Proyectos',
+      'Computación en la Nube'
+    ],
+    techStack: [
+      { name: 'AWS/Azure', desc: 'Servicios en la nube y Serverless.' },
+      { name: 'CI/CD Jenkins/Actions', desc: 'Automatización de despliegues (DevOps).' },
+      { name: 'Microservicios', desc: 'Arquitecturas distribuidas complejas.' }
+    ],
+    advice: [
+      'Enfócate en tu Tesis o Proyecto de Grado, haz algo que resuelva un problema real.',
+      'Mejora tus "Soft Skills": comunicación, negociación y liderazgo.',
+      'Prepara tu perfil de LinkedIn y practica entrevistas técnicas (LeetCode).'
+    ]
+  }
+};
+
+const ResourceCard = ({ title, items, icon }) => (
+  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+    <div className="flex items-center gap-2 mb-4 text-gray-800 font-semibold border-b pb-2">
+      {icon}
+      <h3>{title}</h3>
+    </div>
+    <ul className="space-y-3">
+      {items.map((item, idx) => (
+        <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+          {typeof item === 'string' ? (
+            <>
+              <ChevronRight className="w-4 h-4 mt-0.5 text-blue-500 shrink-0" />
+              <span>{item}</span>
+            </>
+          ) : (
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-800">{item.name}</span>
+              <span className="text-xs text-gray-500">{item.desc}</span>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+export default function CareerNavigator() {
+  const [activeStage, setActiveStage] = useState('basic');
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header */}
+        <header className="mb-8 text-center md:text-left">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">
+            Ingeniería en Sistemas: <span className="text-blue-600">Tu Ruta al Éxito</span>
+          </h1>
+          <p className="text-slate-600 text-lg">
+            Guía interactiva de mentoría académica y profesional.
+          </p>
+        </header>
+
+        {/* Navigation Tabs */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          {Object.values(stages).map((stage) => (
+            <button
+              key={stage.id}
+              onClick={() => setActiveStage(stage.id)}
+              className={`flex-1 p-4 rounded-xl border transition-all duration-200 flex items-center justify-center gap-3
+                ${activeStage === stage.id 
+                  ? `${stage.color} text-white shadow-lg scale-105 border-transparent` 
+                  : 'bg-white text-gray-600 hover:bg-gray-50 border-gray-200'
+                }`}
+            >
+              <div className={`p-2 rounded-full ${activeStage === stage.id ? 'bg-white/20' : 'bg-gray-100 text-gray-500'}`}>
+                {stage.icon}
+              </div>
+              <div className="text-left">
+                <div className="font-bold text-sm md:text-base">{stage.title.split(':')[0]}</div>
+                <div className="text-xs opacity-90">{stage.title.split(':')[1]}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Content Area */}
+        <div className="animate-fade-in">
+          <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200 mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className={`p-3 rounded-lg ${stages[activeStage].color} bg-opacity-10`}>
+                {React.cloneElement(stages[activeStage].icon, { className: `w-8 h-8 ${stages[activeStage].color.replace('bg-', 'text-')}` })}
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">{stages[activeStage].title}</h2>
+                <p className="text-gray-500">{stages[activeStage].description}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <ResourceCard 
+                title="Materias Clave" 
+                icon={<BookOpen className="w-5 h-5 text-emerald-600" />}
+                items={stages[activeStage].subjects} 
+              />
+              <ResourceCard 
+                title="Stack Tecnológico Sugerido" 
+                icon={<Terminal className="w-5 h-5 text-blue-600" />}
+                items={stages[activeStage].techStack} 
+              />
+              <ResourceCard 
+                title="Consejo del Mentor" 
+                icon={<Award className="w-5 h-5 text-amber-500" />}
+                items={stages[activeStage].advice} 
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section: Common Skills */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-slate-800 text-white p-6 rounded-2xl">
+            <h3 className="flex items-center gap-2 text-xl font-bold mb-4">
+              <Shield className="w-6 h-6 text-cyan-400" />
+              Habilidades Transversales (Soft Skills)
+            </h3>
+            <p className="text-slate-300 mb-4 text-sm">
+              Independientemente de tu semestre, estas habilidades definen tu crecimiento salarial y profesional.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-cyan-400" />
+                <span>Inglés (Nivel B2 mínimo recomendado)</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-cyan-400" />
+                <span>Trabajo en equipo (Metodologías Ágiles/Scrum)</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-cyan-400" />
+                <span>Autoaprendizaje (Aprender a buscar en Google/Docs)</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-white border border-gray-200 p-6 rounded-2xl">
+            <h3 className="flex items-center gap-2 text-xl font-bold mb-4 text-gray-800">
+              <Users className="w-6 h-6 text-purple-600" />
+              ¿Cómo te puedo ayudar hoy?
+            </h3>
+            <p className="text-gray-600 mb-4 text-sm">
+              Como tu mentor IA, puedes pedirme cosas específicas como:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <span className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-medium border border-purple-100">Explicar Polimorfismo</span>
+              <span className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-medium border border-purple-100">Ideas para proyecto de BD</span>
+              <span className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-medium border border-purple-100">Revisar mi código Python</span>
+              <span className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-medium border border-purple-100">Planificar mi horario</span>
+              <span className="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-medium border border-purple-100">Simular entrevista técnica</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
